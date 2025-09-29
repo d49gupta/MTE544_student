@@ -53,15 +53,16 @@ class motion_executioner(Node):
         # TODO Part 5: Create below the subscription to the topics corresponding to the respective sensors
         # IMU subscription
         
-        ...
+        self.imu_subscriber = self.create_subscription(Imu, 'imu_topic' self.imu_callback, 10)
         
         # ENCODER subscription
 
-        ...
+        self.encoder_subscriber = self.create_subscription(Odom, 'odom_topic', self.odom_callback, 10)
+
         
         # LaserScan subscription 
         
-        ...
+        self.laserscan_subscriber = self.create_subscription(LaserScan, 'laserscan_topic', self.laser_callback, 10)
         
         self.create_timer(0.1, self.timer_callback)
 
@@ -73,9 +74,14 @@ class motion_executioner(Node):
     # You can save the needed fields into a list, and pass the list to the log_values function in utilities.py
 
     def imu_callback(self, imu_msg: Imu):
-        ...    # log imu msgs
+        imu_logs = []
+        imu_logs[0] = Time.from_msg(imu_msg.header.stamp).nanoseconds
+        imu_logs[1] = imu_msg.orientation.x
+        imu_logs[2] = imu_msg.orientation.y
+        imu_logs[3] = imu_msg.orientation.z
+        imu_logs[4] = imu_msg.orientation.w
         
-    def odom_callback(self, odom_msg: Odometry):
+    def odom_callback(self, odom_msdg: Odometry):
         
         ... # log odom msgs
                 
@@ -114,17 +120,20 @@ class motion_executioner(Node):
     def make_circular_twist(self):
         
         msg=Twist()
-        ... # fill up the twist msg for circular motion
+        msg.angular.z = 1.0  # fill up the twist msg for circular motion
+        msg.linear.x = 0
         return msg
 
     def make_spiral_twist(self):
         msg=Twist()
-        ... # fill up the twist msg for spiral motion
+        msg.angular.z = 1.0 # fill up the twist msg for spiral motion
+        msg.linear.x = 1.0
         return msg
     
     def make_acc_line_twist(self):
         msg=Twist()
-        ... # fill up the twist msg for line motion
+        msg.angular.z = 0
+        msg.linear.x = 1.0 # fill up the twist msg for line motion
         return msg
 
 import argparse
