@@ -13,7 +13,7 @@ from rclpy.qos import QoSProfile
 from geometry_msgs.msg import Twist
 from sensor_msgs.msg import Imu
 from sensor_msgs.msg import LaserScan
-from nav_msgs import Odometry
+from nav_msgs.msg import Odometry
 
 from rclpy.time import Time
 
@@ -58,7 +58,6 @@ class motion_executioner(Node):
         # ENCODER subscription
 
         self.encoder_subscriber = self.create_subscription(Odom, 'odom_topic', self.odom_callback, 10)
-
         
         # LaserScan subscription 
         
@@ -74,20 +73,31 @@ class motion_executioner(Node):
     # You can save the needed fields into a list, and pass the list to the log_values function in utilities.py
 
     def imu_callback(self, imu_msg: Imu):
-        imu_logs = []
-        imu_logs[0] = Time.from_msg(imu_msg.header.stamp).nanoseconds
-        imu_logs[1] = imu_msg.orientation.x
-        imu_logs[2] = imu_msg.orientation.y
-        imu_logs[3] = imu_msg.orientation.z
-        imu_logs[4] = imu_msg.orientation.w
-        
+        acc_x = imu_msg.linear_acceleration.x
+        acc_y = imu_msg.linear_acceleration.y 
+        angular_z = imu_msg.angular_velocity.z
+        stamp = Time.from_msg(imu_msg.header.stamp).nanoseconds
+
+        imu_log = {acc_x, acc_y, angular_z, stamp}
+        self.imu_logger.log_values(imu_log)
+
     def odom_callback(self, odom_msdg: Odometry):
-        
-        ... # log odom msgs
-                
+        x = odom_msg.pose.pose.position.x
+        y = odom_msg.pose.pose.position.y
+        th = odom_msg.pose.pose.orientation.{w,x,y,z}
+        stamp = Time.from_msg(odom_msdg.header.stamp).nanoseconds 
+
+        odom_log = {x, y, th, stamp}
+        self.odom_logger.log_values(odom_log)
+
     def laser_callback(self, laser_msg: LaserScan):
-        
-        ... # log laser msgs with position msg at that time
+        ranges = laser_msg.ranges
+        angle_increment = laser_msg.angle_increment
+        stamp = Time.from_msg(laser_msg.header.stamp).nanoseconds 
+
+        laser_log = {ranges, angle_increment, stamp}
+        self.laser_logger.log_values(laser_log)
+
                 
     def timer_callback(self):
         

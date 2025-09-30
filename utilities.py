@@ -24,7 +24,15 @@ class Logger:
             vals_str=""
 
             # TODO Part 5: Write the values from the list to the file
-            ...
+            for val in values_list:
+                curr = ""
+                if isinstance(val, (list)):
+                    for elem in val:
+                        curr += str(elem) + ","
+                else:
+                    curr = str(val)
+                
+                vals_str += curr + ","
             
             vals_str+="\n"
             
