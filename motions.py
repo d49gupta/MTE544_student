@@ -79,6 +79,7 @@ class motion_executioner(Node):
         stamp = Time.from_msg(imu_msg.header.stamp).nanoseconds
 
         imu_log = [acc_x, acc_y, angular_z, stamp]
+        self.imu_initialized = True
         self.imu_logger.log_values(imu_log)
 
     def odom_callback(self, odom_msdg: Odometry):
@@ -89,6 +90,7 @@ class motion_executioner(Node):
         stamp = Time.from_msg(odom_msdg.header.stamp).nanoseconds 
 
         odom_log = [x, y, th, stamp]
+        self.odom_initialized = True
         self.odom_logger.log_values(odom_log)
 
     def laser_callback(self, laser_msg: LaserScan):
@@ -97,6 +99,7 @@ class motion_executioner(Node):
         stamp = Time.from_msg(laser_msg.header.stamp).nanoseconds 
 
         laser_log = [ranges, angle_increment, stamp]
+        self.laser_initialized = True
         self.laser_logger.log_values(laser_log)
 
                 
@@ -106,6 +109,7 @@ class motion_executioner(Node):
             self.successful_init=True
             
         if not self.successful_init:
+            print("something went wrong")
             return
         
         cmd_vel_msg=Twist()
@@ -123,27 +127,30 @@ class motion_executioner(Node):
             print("type not set successfully, 0: CIRCLE 1: SPIRAL and 2: ACCELERATED LINE")
             raise SystemExit 
 
+        print("published velocity")
         self.vel_publisher.publish(cmd_vel_msg)
         
     
     # TODO Part 4: Motion functions: complete the functions to generate the proper messages corresponding to the desired motions of the robot
 
     def make_circular_twist(self):
-        
+        print("Circular Twist Called")
         msg=Twist()
         msg.angular.z = 1.0  # fill up the twist msg for circular motion
-        msg.linear.x = 0
+        msg.linear.x = 0.0
         return msg
 
     def make_spiral_twist(self):
+        print("Spiral Twist Called")
         msg=Twist()
         msg.angular.z = 1.0 # fill up the twist msg for spiral motion
         msg.linear.x = 1.0
         return msg
     
     def make_acc_line_twist(self):
+        print("Straight Line Called")
         msg=Twist()
-        msg.angular.z = 0
+        msg.angular.z = 0.0
         msg.linear.x = 1.0 # fill up the twist msg for line motion
         return msg
 
