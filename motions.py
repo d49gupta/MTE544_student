@@ -53,15 +53,15 @@ class motion_executioner(Node):
         # TODO Part 5: Create below the subscription to the topics corresponding to the respective sensors
         # IMU subscription
         
-        self.imu_subscriber = self.create_subscription(Imu, 'imu_topic' self.imu_callback, 10)
+        self.imu_subscriber = self.create_subscription(Imu, '/imu', self.imu_callback, 10)
         
         # ENCODER subscription
 
-        self.encoder_subscriber = self.create_subscription(Odom, 'odom_topic', self.odom_callback, 10)
+        self.encoder_subscriber = self.create_subscription(Odometry, '/odom', self.odom_callback, 10)
         
         # LaserScan subscription 
         
-        self.laserscan_subscriber = self.create_subscription(LaserScan, 'laserscan_topic', self.laser_callback, 10)
+        self.laserscan_subscriber = self.create_subscription(LaserScan, '/scan', self.laser_callback, 10)
         
         self.create_timer(0.1, self.timer_callback)
 
@@ -78,16 +78,17 @@ class motion_executioner(Node):
         angular_z = imu_msg.angular_velocity.z
         stamp = Time.from_msg(imu_msg.header.stamp).nanoseconds
 
-        imu_log = {acc_x, acc_y, angular_z, stamp}
+        imu_log = [acc_x, acc_y, angular_z, stamp]
         self.imu_logger.log_values(imu_log)
 
     def odom_callback(self, odom_msdg: Odometry):
-        x = odom_msg.pose.pose.position.x
-        y = odom_msg.pose.pose.position.y
-        th = odom_msg.pose.pose.orientation.{w,x,y,z}
+        x = odom_msdg.pose.pose.position.x
+        y = odom_msdg.pose.pose.position.y
+        orientation = odom_msdg.pose.pose.orientation
+        th = {orientation.x, orientation.y, orientation.z, orientation.w}
         stamp = Time.from_msg(odom_msdg.header.stamp).nanoseconds 
 
-        odom_log = {x, y, th, stamp}
+        odom_log = [x, y, th, stamp]
         self.odom_logger.log_values(odom_log)
 
     def laser_callback(self, laser_msg: LaserScan):
@@ -95,7 +96,7 @@ class motion_executioner(Node):
         angle_increment = laser_msg.angle_increment
         stamp = Time.from_msg(laser_msg.header.stamp).nanoseconds 
 
-        laser_log = {ranges, angle_increment, stamp}
+        laser_log = [ranges, angle_increment, stamp]
         self.laser_logger.log_values(laser_log)
 
                 
