@@ -74,6 +74,7 @@ class motion_executioner(Node):
     # You can save the needed fields into a list, and pass the list to the log_values function in utilities.py
 
     def imu_callback(self, imu_msg: Imu):
+        # save XY linear acceleration, Z anguler velocity, and time stamp
         acc_x = imu_msg.linear_acceleration.x
         acc_y = imu_msg.linear_acceleration.y 
         angular_z = imu_msg.angular_velocity.z
@@ -84,10 +85,11 @@ class motion_executioner(Node):
         self.imu_logger.log_values(imu_log)
 
     def odom_callback(self, odom_msdg: Odometry):
+        # save XY position, Yaw angle, and time stamp
         x = odom_msdg.pose.pose.position.x
         y = odom_msdg.pose.pose.position.y
         orientation = odom_msdg.pose.pose.orientation
-        th = {orientation.x, orientation.y, orientation.z, orientation.w}
+        th = euler_from_quaternion(orientation)
         stamp = Time.from_msg(odom_msdg.header.stamp).nanoseconds 
 
         odom_log = [x, y, th, stamp]
@@ -95,6 +97,7 @@ class motion_executioner(Node):
         self.odom_logger.log_values(odom_log)
 
     def laser_callback(self, laser_msg: LaserScan):
+        # save ranges, angle increment, and time stamp
         ranges = laser_msg.ranges
         angle_increment = laser_msg.angle_increment
         stamp = Time.from_msg(laser_msg.header.stamp).nanoseconds 
@@ -145,7 +148,7 @@ class motion_executioner(Node):
         print("Spiral Twist Called")
         msg=Twist()
         msg.angular.z = 3.0 # fill up the twist msg for spiral motion
-        msg.linear.x = 1.0 + self.spiral_count * 0.01
+        msg.linear.x = 1.0 + self.spiral_count * 0.01 # increase the linear velocity slowly
         self.spiral_count += 0.5
         return msg
     
