@@ -4,7 +4,7 @@ from utilities import Logger, euler_from_quaternion
 from rclpy.time import Time
 from rclpy.node import Node
 
-from rclpy.qos import QoSProfile, QoSReliabilityPolicy,QoSDurabilityPolicy, QoSHistoryPolicy
+from rclpy.qos import QoSProfile, QoSReliabilityPolicy, QoSDurabilityPolicy, QoSHistoryPolicy
 from nav_msgs.msg import Odometry as odom
 
 from rclpy import init, spin, shutdown
@@ -22,16 +22,16 @@ class localization(Node):
         use_Sim = True  # Change this based on whether you're using simulation or real robot
         if use_Sim:
             odom_qos = QoSProfile(
-                reliability = QoSReliabilityPolicy.BEST_EFFORT,
+                reliability = QoSReliabilityPolicy.RELIABLE,
                 durability = QoSDurabilityPolicy.VOLATILE,
-                history = 1,
+                history = QoSHistoryPolicy.KEEP_LAST,
                 depth = 10
             )
         else: 
             odom_qos = QoSProfile(
                 reliability = QoSReliabilityPolicy.BEST_EFFORT,
                 durability = QoSDurabilityPolicy.VOLATILE,
-                history = 1,
+                history = HistoryPolicy.KEEP_LAST,
                 depth = 10
             )
         
@@ -40,7 +40,9 @@ class localization(Node):
         
         if localizationType == rawSensor:
             # TODO Part 3: subscribe to the position sensor topic (Odometry)
-            self.create_subscription(odom, "/odom", self.odom_callback, qos_profile=odom_qos)
+            print("DID I GET HERE")
+            # self.create_subscription(odom, "/odom", self.odom_callback, qos_profile=odom_qos)
+            self.create_subscription(odom, "/odom", self.odom_callback, 10)
         else:
             print("This type doesn't exist", sys.stderr)
     
@@ -48,6 +50,7 @@ class localization(Node):
     def odom_callback(self, pose_msg):
         
         # TODO Part 3: Read x,y, theta, and record the stamp
+        print("ODOM CALLBACK")
         theta = euler_from_quaternion(pose_msg.pose.pose.orientation)
         pos = pose_msg.pose.pose.position
         self.pose=[pos.x, pos.y, theta, pose_msg.header.stamp]

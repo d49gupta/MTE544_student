@@ -10,7 +10,7 @@ from rclpy import init, spin, spin_once, shutdown
 from rclpy.node import Node
 from geometry_msgs.msg import Twist
 
-from rclpy.qos import QoSProfile, QoSReliabilityPolicy, QoSDurabilityPolicy
+from rclpy.qos import QoSProfile, QoSReliabilityPolicy, QoSDurabilityPolicy, QoSHistoryPolicy
 from nav_msgs.msg import Odometry as odom
 
 from localization import localization, rawSensor
@@ -36,7 +36,6 @@ class decision_maker(Node):
         
         # Instantiate the controller
         # TODO Part 5: Tune your parameters here
-        controller = trajectoryController()
     
         if motion_type == POINT_PLANNER:
             self.controller=controller(klp=0.2, klv=0.5, kap=0.8, kav=0.6)
@@ -107,9 +106,23 @@ def main(args=None):
     # TODO Part 3: You migh need to change the QoS profile based on whether you're using the real robot or in simulation.
     # Remember to define your QoS profile based on the information available in "ros2 topic info /odom --verbose" as explained in Tutorial 3
     
-    odom_qos=QoSProfile(reliability=2, durability=2, history=1, depth=10) # CHECK DURING TEST
-    
 
+    use_Sim = True  # Change this based on whether you're using simulation or real robot
+    if use_Sim:
+        odom_qos = QoSProfile(
+            reliability = QoSReliabilityPolicy.RELIABLE,
+            durability = QoSDurabilityPolicy.VOLATILE,
+            history = QoSHistoryPolicy.KEEP_LAST,
+            depth = 10
+        )
+    else: 
+        odom_qos = QoSProfile(
+            reliability = QoSReliabilityPolicy.BEST_EFFORT,
+            durability = QoSDurabilityPolicy.VOLATILE,
+            history = HistoryPolicy.KEEP_LAST,
+            depth = 10
+        )
+    
     # TODO Part 4: instantiate the decision_maker with the proper parameters for moving the robot
     # CHECK GOAL POINT
     if args.motion.lower() == "point":
