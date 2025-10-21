@@ -67,9 +67,6 @@ class trajectoryController(controller):
         # In-lab (Turtlebot4) - https://turtlebot.github.io/turtlebot4-user-manual/overview/features.html#hardware-specifications
         # linear_vel = np.clip(linear_vel, a_max=0.31, a_min = -0.31) # m/s (IN SAFE MODE)
         # angular_vel= np.clip(angular_vel, a_max=1.90, a_min = -1.90) # rad/s
-
-        linear_vel = ... 
-        angular_vel= ... 
         
         return linear_vel, angular_vel
 

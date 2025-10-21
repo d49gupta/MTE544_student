@@ -17,6 +17,7 @@ from localization import localization, rawSensor
 
 from planner import TRAJECTORY_PLANNER, POINT_PLANNER, planner
 from controller import controller, trajectoryController
+from planner import PARABOLA, SIGMOID
 
 LINEAR_ERR_THRESH = 0.05 # meters
 ANG_ERR_THRESH = 0.05 # radians
@@ -133,7 +134,7 @@ def main(args=None):
     if args.motion.lower() == "point":
         DM = decision_maker(Twist, '/cmd_vel', odom_qos, goalPoint=[2, -10], motion_type=POINT_PLANNER)
     elif args.motion.lower() == "trajectory":
-        DM = decision_maker(Twist, '/cmd_vel', odom_qos , goalPoint=[2.0, 2.0], motion_type=TRAJECTORY_PLANNER)
+        DM = decision_maker(Twist, '/cmd_vel', odom_qos , goalPoint=SIGMOID, motion_type=TRAJECTORY_PLANNER)
     else:
         print("invalid motion type", file=sys.stderr)        
     
