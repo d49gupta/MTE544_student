@@ -85,7 +85,7 @@ class decision_maker(Node):
             reached_goal = (abs(lin_err) < LINEAR_ERR_THRESH) and (abs(ang_err) < ANG_ERR_THRESH)            
 
         if reached_goal:
-            self.publisher.publish(vel_msg)
+            # self.publisher.publish(vel_msg)
             
             self.controller.PID_angular.logger.save_log()
             self.controller.PID_linear.logger.save_log()
@@ -94,6 +94,7 @@ class decision_maker(Node):
             raise SystemExit
         
         velocity, yaw_rate = self.controller.vel_request(self.localizer.getPose(), self.goal, True)
+        print(velocity, yaw_rate)
         vel_msg.linear.x = velocity
         vel_msg.angular.z = yaw_rate
 
@@ -130,7 +131,7 @@ def main(args=None):
     # TODO Part 4: instantiate the decision_maker with the proper parameters for moving the robot
     # CHECK GOAL POINT
     if args.motion.lower() == "point":
-        DM = decision_maker(Twist, '/cmd_vel', odom_qos, goalPoint=[2.0, 2.0], motion_type=POINT_PLANNER)
+        DM = decision_maker(Twist, '/cmd_vel', odom_qos, goalPoint=[0, -6], motion_type=POINT_PLANNER)
     elif args.motion.lower() == "trajectory":
         DM = decision_maker(Twist, '/cmd_vel', odom_qos , goalPoint=[2.0, 2.0], motion_type=TRAJECTORY_PLANNER)
     else:

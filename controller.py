@@ -30,12 +30,12 @@ class controller:
         
         # TODO Part 4: Add saturation limits for the robot linear and angular velocity (hint: you can use np.clip function)
         # Simulation (Turtlebot3 burger) - https://emanual.robotis.com/docs/en/platform/turtlebot3/features/
-        linear_vel = np.clip(linear_vel, a_max=0.22) # m/s
-        angular_vel= np.clip(angular_vel, a_max=2.84) # rad/s
+        linear_vel = np.clip(linear_vel, a_max=0.22, a_min = -0.22) # m/s
+        angular_vel= np.clip(angular_vel, a_max=2.84, a_min = -2.84) # rad/s
 
         # In-lab (Turtlebot4) - https://turtlebot.github.io/turtlebot4-user-manual/overview/features.html#hardware-specifications
-        linear_vel = np.clip(linear_vel, a_max=0.31) # m/s (IN SAFE MODE)
-        angular_vel= np.clip(angular_vel, a_max=1.90) # rad/s
+        # linear_vel = np.clip(linear_vel, a_max=0.31, a_min = -0.31) # m/s (IN SAFE MODE)
+        # angular_vel= np.clip(angular_vel, a_max=1.90, a_min = -1.90) # rad/s
 
         return linear_vel, angular_vel
     

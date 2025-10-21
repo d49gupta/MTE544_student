@@ -48,7 +48,6 @@ class localization(Node):
     def odom_callback(self, pose_msg):
         
         # TODO Part 3: Read x,y, theta, and record the stamp
-        print("ODOM CALLBACK")
         theta = euler_from_quaternion(pose_msg.pose.pose.orientation)
         pos = pose_msg.pose.pose.position
         self.pose=[pos.x, pos.y, theta, pose_msg.header.stamp]
