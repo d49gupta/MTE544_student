@@ -18,6 +18,8 @@ from localization import localization, rawSensor
 from planner import TRAJECTORY_PLANNER, POINT_PLANNER, planner
 from controller import controller, trajectoryController
 
+LINEAR_ERR_THRESH = 0.05 # meters
+ANG_ERR_THRESH = 0.05 # radians
 
 # You may add any other imports you may need/want to use below
 # import ...
@@ -74,20 +76,22 @@ class decision_maker(Node):
         
         # TODO Part 3: Check if you reached the goal
         if type(self.goal) == list:
-            reached_goal = True
+            lin_err = calculate_linear_error(self.localizer.getPose(), self.goal[-1])
+            ang_err = calculate_angular_error(self.localizer.getPose(), self.goal[-1])
+            reached_goal = (abs(lin_err) < LINEAR_ERR_THRESH) and (abs(ang_err) < ANG_ERR_THRESH)
         else: 
-            reached_goal= False
-        
+            lin_err = calculate_linear_error(self.localizer.getPose(), self.goal)
+            ang_err = calculate_angular_error(self.localizer.getPose(), self.goal)
+            reached_goal = (abs(lin_err) < LINEAR_ERR_THRESH) and (abs(ang_err) < ANG_ERR_THRESH)            
 
         if reached_goal:
-            print("reached goal")
             self.publisher.publish(vel_msg)
             
             self.controller.PID_angular.logger.save_log()
             self.controller.PID_linear.logger.save_log()
             
             #TODO Part 3: exit the spin
-            shutdown() # shuts down all running nodes in process 
+            raise SystemExit
         
         velocity, yaw_rate = self.controller.vel_request(self.localizer.getPose(), self.goal, True)
         vel_msg.linear.x = velocity

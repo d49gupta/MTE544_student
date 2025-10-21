@@ -15,7 +15,7 @@ class planner:
             return self.point_planner(goalPoint)
         
         elif self.type==TRAJECTORY_PLANNER:
-            return self.trajectory_planner()
+            return self.trajectory_planner(goalPoint)
 
 
     def point_planner(self, goalPoint):
@@ -24,8 +24,14 @@ class planner:
         return x, y
 
     # TODO Part 6: Implement the trajectories here
-    def trajectory_planner(self):
-        pass
+    def trajectory_planner(self, goalPoint):
         # the return should be a list of trajectory points: [ [x1,y1], ..., [xn,yn]]
         # return 
+        trajectory = []
+        length = len(goalPoint) - goalPoint % 2
+        for i in range(0, length, 2):
+            trajectory.append([goalPoint[i], goalPoint[i+1]])
+
+        return trajectory
+
 
