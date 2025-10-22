@@ -120,6 +120,8 @@ Now, you can test your P-controller with the point planner before proceeding:
 - Undock your robot if needed, and use the teleop node to drive your robot to a free space;
 - Run: ```python3 decision.py --motion point``` and robot should move to the corresponding point specified in ```planner.py```.
 
+### Show Point motion to one of the TAs.
+
 ## Part 5 - Upgrade to PID (20 marks)
 Now that you have implemented a P-controller, proceed with the extension to include the derivative and integral components. You will need to:
 - Implement the error derivative and integral; follow the comments in ```pid.py```;
@@ -139,6 +141,8 @@ Implement more complex trajectories to test the performance of your controllers,
 For real robots, you will need to tune your generated trajectory to make sure it fits into the classroom space.
 Choose one of the controllers among P, PI, PD, PID (you need to provide a reason) and tune your gains to obtain a good performance in terms of tracking:
 Run: ```python3 decision.py --motion trajectory```
+
+### Show Parabola and Sigmoid motions to one of the TAs.
 
 Process the errors and visualize the plots to see how your controller is performing. Do a post-process plot with the logged data. You can use the ```plot_errors.py``` file (adapt and modify accordingly).
 
