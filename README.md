@@ -7,8 +7,6 @@ Welcome to LAB 2 of the mobile robotics course! Here, you start shaping the over
 In this lab, Participants will gain hands-on experience with mobile robots and acquire knowledge about their basic functionalities. By the end of this lab, participants will be able to:
 - Use the position data in a controller;
 - Control a mobile robot using a tunable PID controller.
-- Implement pure pursuit controller
-
 
 #### The summary of what you should learn is as following:
 
