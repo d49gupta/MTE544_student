@@ -19,7 +19,7 @@ class localization(Node):
         # TODO Part 3: Define the QoS profile variable based on whether you are using the simulation (Turtlebot 3 Burger) or the real robot (Turtlebot 4)
         # Remember to define your QoS profile based on the information available in "ros2 topic info /odom --verbose" as explained in Tutorial 3
 
-        use_Sim = True  # Change this based on whether you're using simulation or real robot
+        use_Sim = False  # Change this based on whether you're using simulation or real robot
         if use_Sim:
             odom_qos = QoSProfile(
                 reliability = QoSReliabilityPolicy.RELIABLE,
@@ -31,11 +31,11 @@ class localization(Node):
             odom_qos = QoSProfile(
                 reliability = QoSReliabilityPolicy.BEST_EFFORT,
                 durability = QoSDurabilityPolicy.VOLATILE,
-                history = HistoryPolicy.KEEP_LAST,
+                history = QoSHistoryPolicy.KEEP_LAST,
                 depth = 10
             )
         
-        self.loc_logger=Logger("robot_pose.csv", ["x", "y", "theta", "stamp"])
+        self.loc_logger=Logger("robot_pose_sigmoid.csv", ["x", "y", "theta", "stamp"])
         self.pose=None
         
         if localizationType == rawSensor:
@@ -51,9 +51,9 @@ class localization(Node):
         theta = euler_from_quaternion(pose_msg.pose.pose.orientation)
         pos = pose_msg.pose.pose.position
         self.pose=[pos.x, pos.y, theta, pose_msg.header.stamp]
-        
+        stamp = float(Time.from_msg(self.pose[3]).nanoseconds)
         # Log the data
-        self.loc_logger.log_values([self.pose[0], self.pose[1], self.pose[2], Time.from_msg(self.pose[3]).nanoseconds])
+        self.loc_logger.log_values([self.pose[0], self.pose[1], self.pose[2], stamp])
     
     def getPose(self):
         return self.pose
