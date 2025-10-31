@@ -30,6 +30,7 @@ class planner:
         # return
         trajectory = []
 
+        # use equation for parabola and sigmoid to generate points
         if pathType == PARABOLA:
             for x in np.arange(0, 1.5, 0.01):
                 y = x * x

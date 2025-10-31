@@ -75,7 +75,7 @@ class decision_maker(Node):
 
         vel_msg=Twist()
         
-        # TODO Part 3: Check if you reached the goal
+        # TODO Part 3: Check if you reached the goal using both linear and angular threshold errors
         if type(self.goal) == list:
             lin_err = calculate_linear_error(self.localizer.getPose(), self.goal[-1])
             ang_err = calculate_angular_error(self.localizer.getPose(), self.goal[-1])
@@ -94,6 +94,7 @@ class decision_maker(Node):
             #TODO Part 3: exit the spin
             raise SystemExit
         
+        # Update and publish desired velocity and yaw rate based off controller
         velocity, yaw_rate = self.controller.vel_request(self.localizer.getPose(), self.goal, True)
         print(velocity, yaw_rate)
         vel_msg.linear.x = velocity
@@ -134,6 +135,7 @@ def main(args=None):
     if args.motion.lower() == "point":
         DM = decision_maker(Twist, '/cmd_vel', odom_qos, goalPoint=[1, 1], motion_type=POINT_PLANNER)
     elif args.motion.lower() == "trajectory":
+        # choose between SIGMOID and PARABOLA in main for trajectory control
         DM = decision_maker(Twist, '/cmd_vel', odom_qos , goalPoint=SIGMOID, motion_type=TRAJECTORY_PLANNER)
     else:
         print("invalid motion type", file=sys.stderr)        

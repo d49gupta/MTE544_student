@@ -51,6 +51,7 @@ class localization(Node):
         theta = euler_from_quaternion(pose_msg.pose.pose.orientation)
         pos = pose_msg.pose.pose.position
         self.pose=[pos.x, pos.y, theta, pose_msg.header.stamp]
+        # convert time to raw float for easy logging
         stamp = float(Time.from_msg(self.pose[3]).nanoseconds)
         # Log the data
         self.loc_logger.log_values([self.pose[0], self.pose[1], self.pose[2], stamp])
