@@ -19,8 +19,8 @@ from planner import TRAJECTORY_PLANNER, POINT_PLANNER, planner
 from controller import controller, trajectoryController
 from planner import PARABOLA, SIGMOID
 
-LINEAR_ERR_THRESH = 0.1 # meters
-ANG_ERR_THRESH = 0.2 # radians
+LINEAR_ERR_THRESH = 0.05 # meters
+ANG_ERR_THRESH = 0.05 # radians
 
 # You may add any other imports you may need/want to use below
 # import ...
@@ -78,13 +78,11 @@ class decision_maker(Node):
         # TODO Part 3: Check if you reached the goal
         if type(self.goal) == list:
             lin_err = calculate_linear_error(self.localizer.getPose(), self.goal[-1])
-            # ang_err = calculate_angular_error(self.localizer.getPose(), self.goal[-1])
-            ang_err = 0
+            ang_err = calculate_angular_error(self.localizer.getPose(), self.goal[-1])
             reached_goal = (abs(lin_err) < LINEAR_ERR_THRESH) and (abs(ang_err) < ANG_ERR_THRESH)
         else: 
             lin_err = calculate_linear_error(self.localizer.getPose(), self.goal)
-            # ang_err = calculate_angular_error(self.localizer.getPose(), self.goal)
-            ang_err = 0
+            ang_err = calculate_angular_error(self.localizer.getPose(), self.goal)
             reached_goal = (abs(lin_err) < LINEAR_ERR_THRESH) and (abs(ang_err) < ANG_ERR_THRESH)            
 
         if reached_goal:
