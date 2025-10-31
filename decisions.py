@@ -20,7 +20,7 @@ from controller import controller, trajectoryController
 from planner import PARABOLA, SIGMOID
 
 LINEAR_ERR_THRESH = 0.1 # meters
-ANG_ERR_THRESH = 0.1 # radians
+ANG_ERR_THRESH = 0.2 # radians
 
 # You may add any other imports you may need/want to use below
 # import ...
@@ -41,12 +41,12 @@ class decision_maker(Node):
         # TODO Part 5: Tune your parameters here
     
         if motion_type == POINT_PLANNER:
-            self.controller=controller(klp=0.2, klv=0.5, kap=0.8, kav=0.6)
+            self.controller=controller(klp=0.2, klv=0.6, kap=0.8, kav=0.6)
             self.planner=planner(POINT_PLANNER)    
     
     
         elif motion_type==TRAJECTORY_PLANNER:
-            self.controller=trajectoryController(klp=0.2, klv=0.5, kap=0.8, kav=0.6)
+            self.controller=trajectoryController(klp=0.28, klv=2.4, kap=0.23, kav=0.85)
             self.planner=planner(TRAJECTORY_PLANNER)
 
         else:
@@ -78,11 +78,13 @@ class decision_maker(Node):
         # TODO Part 3: Check if you reached the goal
         if type(self.goal) == list:
             lin_err = calculate_linear_error(self.localizer.getPose(), self.goal[-1])
-            ang_err = calculate_angular_error(self.localizer.getPose(), self.goal[-1])
+            # ang_err = calculate_angular_error(self.localizer.getPose(), self.goal[-1])
+            ang_err = 0
             reached_goal = (abs(lin_err) < LINEAR_ERR_THRESH) and (abs(ang_err) < ANG_ERR_THRESH)
         else: 
             lin_err = calculate_linear_error(self.localizer.getPose(), self.goal)
-            ang_err = calculate_angular_error(self.localizer.getPose(), self.goal)
+            # ang_err = calculate_angular_error(self.localizer.getPose(), self.goal)
+            ang_err = 0
             reached_goal = (abs(lin_err) < LINEAR_ERR_THRESH) and (abs(ang_err) < ANG_ERR_THRESH)            
 
         if reached_goal:
@@ -113,7 +115,7 @@ def main(args=None):
     # Remember to define your QoS profile based on the information available in "ros2 topic info /odom --verbose" as explained in Tutorial 3
     
 
-    use_Sim = True  # Change this based on whether you're using simulation or real robot
+    use_Sim = False  # Change this based on whether you're using simulation or real robot
     if use_Sim:
         odom_qos = QoSProfile(
             reliability = QoSReliabilityPolicy.RELIABLE,
@@ -125,16 +127,16 @@ def main(args=None):
         odom_qos = QoSProfile(
             reliability = QoSReliabilityPolicy.BEST_EFFORT,
             durability = QoSDurabilityPolicy.VOLATILE,
-            history = HistoryPolicy.KEEP_LAST,
+            history = QoSHistoryPolicy.KEEP_LAST,
             depth = 10
         )
     
     # TODO Part 4: instantiate the decision_maker with the proper parameters for moving the robot
     # CHECK GOAL POINT
     if args.motion.lower() == "point":
-        DM = decision_maker(Twist, '/cmd_vel', odom_qos, goalPoint=[2, -10], motion_type=POINT_PLANNER)
+        DM = decision_maker(Twist, '/cmd_vel', odom_qos, goalPoint=[1, 1], motion_type=POINT_PLANNER)
     elif args.motion.lower() == "trajectory":
-        DM = decision_maker(Twist, '/cmd_vel', odom_qos , goalPoint=PARABOLA, motion_type=TRAJECTORY_PLANNER)
+        DM = decision_maker(Twist, '/cmd_vel', odom_qos , goalPoint=SIGMOID, motion_type=TRAJECTORY_PLANNER)
     else:
         print("invalid motion type", file=sys.stderr)        
     

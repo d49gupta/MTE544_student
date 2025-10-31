@@ -1,4 +1,5 @@
-from math import atan2, remainder, sqrt
+from math import atan2, asin, sqrt, remainder
+import re
 
 M_PI=3.1415926535
 
@@ -40,48 +41,65 @@ class Logger:
 
 class FileReader:
     def __init__(self, filename):
-        
         self.filename = filename
-        
-        
+
     def read_file(self):
-        
-        read_headers=False
+        headers = []
+        table = []
+        read_headers = False
 
-        table=[]
-        headers=[]
+        time_pattern = re.compile(r"sec=(\d+),\s*nanosec=(\d+)")
+
         with open(self.filename, 'r') as file:
-
-            if not read_headers:
-                for line in file:
-                    values=line.strip().split(',')
-
-                    for val in values:
-                        if val=='':
-                            break
-                        headers.append(val.strip())
-
-                    read_headers=True
-                    break
-            
-            next(file)
-            
-            # Read each line and extract values
             for line in file:
-                values = line.strip().split(',')
-                
-                row=[]                
-                
-                for val in values:
-                    if val=='':
-                        break
-                    row.append(float(val.strip()))
+                # skip empty or whitespace-only lines
+                if not line.strip():
+                    continue
 
-                table.append(row)
-        
+                values = [v.strip() for v in line.strip().split(',') if v.strip()]
+
+                # Header
+                if not read_headers:
+                    headers = values
+                    read_headers = True
+                    continue
+
+                row = []
+                skip_next = False
+                for i, val in enumerate(values):
+                    if skip_next:
+                        skip_next = False
+                        continue
+
+                    # handle time fields that may be split into 2 columns
+                    if "builtin_interfaces.msg.Time" in val:
+                        # join with next part if it exists
+                        if i + 1 < len(values) and "nanosec" in values[i + 1]:
+                            val = val + ", " + values[i + 1]
+                            skip_next = True
+
+                        match = time_pattern.search(val)
+                        if match:
+                            sec = int(match.group(1))
+                            nsec = int(match.group(2))
+                            row.append(sec + nsec * 1e-9)
+                        else:
+                            row.append(0.0)
+                    else:
+                        # Normal numeric value
+                        try:
+                            row.append(float(val))
+                        except ValueError:
+                            row.append(0.0)
+
+                if row:
+                    table.append(row)
+
         return headers, table
+
     
     
+
 
 # TODO Part 3: Implement the conversion from Quaternion to Euler Angles
 def euler_from_quaternion(quat):
