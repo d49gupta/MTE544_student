@@ -172,7 +172,7 @@ class mapManipulator(Node):
         
         image_array=self.image_array
 
-        from sklearn.neighbors import KDTree
+        from scipy.spatial import cKDTree as KDTree
         
         indices = np.where(image_array < 10)
         indices_arr = np.array([indices[0], indices[1]]).T

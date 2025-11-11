@@ -102,7 +102,7 @@ class particleFilter(Node):
         # TODO: generate the particles around the initial pose (x, y, th) (you should use the std_particle_x, std_particle_y, std_particle_theta)
         gaussian_x = np.random.normal(x, self.std_particle_x, numParticles)
         gaussian_y = np.random.normal(y, self.std_particle_y, numParticles)
-        gaussian_theta = np.random.normal(theta, self.std_particle_theta, numParticles)
+        gaussian_theta = np.random.normal(th, self.std_particle_theta, numParticles)
 
         self.particlePoses = np.column_stack((gaussian_x, gaussian_y, gaussian_theta))
 
@@ -177,7 +177,7 @@ class particleFilter(Node):
         particles_weights = particles_weights / np.sum(particles_weights)
         
         # TODO: randomly sampling N particles from the list of particles based on their weights (hint: use np.random.choice)
-        indices = np.random.choice(self.particles, size=len(self.particles), p=particles_weights)
+        sampled_particles = np.random.choice(self.particles, size=len(self.particles), p=particles_weights)
 
         for bp in sampled_particles:
             x, y, th = bp.getPose()
