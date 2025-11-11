@@ -3,7 +3,7 @@ from mapUtilities import *
 from utilities import *
 from numpy import cos, sin
 import numpy as np
-
+import math
 
 class particle:
 
@@ -18,9 +18,9 @@ class particle:
         w: angular velocity
         dt: time step
         """
-        self.pose[0] += ...
-        self.pose[1] += ...
-        self.pose[2] += ...
+        self.pose[0] += v * math.cos(self.pose[2]) * dt
+        self.pose[1] += v * math.sin(self.pose[2]) * dt
+        self.pose[2] += w * dt
 
     # TODO: You need to explain the following function to TA
     def calculateParticleWeight(self, scanOutput: LaserScan, mapManipulatorInstance: mapManipulator, laser_to_ego_transformation: np.array):
