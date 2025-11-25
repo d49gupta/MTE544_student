@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 from utilities import FileReader
 
 
-
+# test commit
 
 def plot_errors(filename):
     
