@@ -30,6 +30,7 @@ class Node:
 def return_path(current_node, maze):
     path = []
     no_rows, no_columns = np.shape(maze)
+    print(no_rows, no_columns)
     # here we create the initialized result maze with -1 in every position
     result = [[-1 for i in range(no_columns)] for j in range(no_rows)]
     current = current_node
@@ -68,19 +69,22 @@ def search(maze, start, end):
         end[1] < 0 or end[1] >= no_columns or
         maze[start[0], start[1]] > 0.8 or maze[end[0], end[1]] > 0.8):
         print("Start or end is on a wall, or outside the boundaries of the maze")
+        print(start)
+        print(end)
+        print(no_rows, no_columns)
         return None
     
     # TODO PART 4 Create start and end node with initized values for g, h and f
     # Use None as parent if not defined
     start_node = Node(parent=None, position=start)
     start_node.g = 0     # cost from start Node
-    start_node.h = 0     # heuristic estimated cost to end Node
-    start_node.f = 0
+    start_node.h = sqrt((start[0] - end[0])**2 + (start[1] - end[1])**2)     # heuristic estimated cost to end Node
+    start_node.f = start_node.g + start_node.h
 
     end_node = Node(parent=None, position=end)
     end_node.g = float('inf')      # set a large value if not defined
     end_node.h = 0       # heuristic estimated cost to end Node
-    end_node.f = 0
+    end_node.f = end_node.g + end_node.h
 
     # Initialize both yet_to_visit and visited dictionary
     # in this dict we will put all node that are yet_to_visit for exploration.
@@ -167,7 +171,7 @@ def search(maze, start, end):
             node_position = (current_node.position[0] + new_position[0], current_node.position[1] + new_position[1])
 
             # TODO PART 4 Make sure within range (check if within maze boundary)
-            if (row >= 0) and (row < no_rows) and (col >= 0) and (col < no_columns):
+            if (new_position[0] < 0) or (new_position[0] >= no_rows) or (new_position[1] < 0) or (new_position[1] >= no_columns):
                 continue
 
             # Make sure walkable terrain
@@ -185,13 +189,13 @@ def search(maze, start, end):
         for child in children:
 
             # TODO PART 4 Child is on the visited dict (use get method to check if child is in visited dict, if not found then default value is False)
-            if (yet_to_visit_dict.get(child)):
+            if (yet_to_visit_dict.get(child.position)):
                 continue
 
             # TODO PART 4 Create the f, g, and h values
-            child.g = sqrt(move[0]**2 + move[1]**2)
+            child.g = sqrt((child.position[0] - current_node.position[0])**2 + (child.position[1] - current_node.position[1])**2)
             # Heuristic costs calculated here, this is using eucledian distance
-            child.h = sqrt((child.parent[0] - end_node.parent[0])**2 + (child.parent[1] - end_node.parent[1])**2)
+            child.h = sqrt((child.position[0] - end_node.position[0])**2 + (child.position[1] - end_node.position[1])**2)
 
             child.f = child.g + child.h
 
