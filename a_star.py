@@ -81,7 +81,7 @@ def search(maze, start, end):
     # Use None as parent if not defined
     start_node = Node(position = start)
     start_node.g = 0    # cost from start Node
-    start_node.h = manhattan_heuristic(start, end)     # heuristic estimated cost to end Node
+    start_node.h = euclidean_heuristic(start, end)     # heuristic estimated cost to end Node
     start_node.f = start_node.g + start_node.h
 
     end_node = Node(position = end)
