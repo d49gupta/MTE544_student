@@ -81,7 +81,7 @@ def search(maze, start, end):
     # Use None as parent if not defined
     start_node = Node(position = start)
     start_node.g = 0    # cost from start Node
-    start_node.h = man_heuristic(start, end)     # heuristic estimated cost to end Node
+    start_node.h = manhattan_heuristic(start, end)     # heuristic estimated cost to end Node
     start_node.f = start_node.g + start_node.h
 
     end_node = Node(position = end)
@@ -147,8 +147,8 @@ def search(maze, start, end):
         current_fscore = None
         for position, node in yet_to_visit_dict.items():
             if current_fscore is None or node.f < current_fscore:
-                current_fscore = ...
-                current_node = ...
+                current_fscore = node.f
+                current_node = node
 
         # if we hit this point return the path such as it may be no solution or
         # computation cost is too high
@@ -174,7 +174,8 @@ def search(maze, start, end):
             node_position = (current_node.position[0] + new_position[0], current_node.position[1] + new_position[1])
 
             # TODO PART 4 Make sure within range (check if within maze boundary)
-            if (...):
+            if (node_position[0] < 0 or node_position[0] >= no_rows or
+                node_position[1] < 0 or node_position[1] >= no_columns):
                 continue
 
             # Make sure walkable terrain
@@ -192,13 +193,13 @@ def search(maze, start, end):
         for child in children:
 
             # TODO PART 4 Child is on the visited dict (use get method to check if child is in visited dict, if not found then default value is False)
-            if ():
+            if (visited_dict.get(child)):
                 continue
 
             # TODO PART 4 Create the f, g, and h values
-            child.g = ...
+            child.g = sqrt(move[child[0]]^2 + move[child[1]]^2)
             # Heuristic costs calculated here, this is using eucledian distance
-            child.h = ...
+            child.h = euclidean_heuristic(child[0], child[1])
 
             child.f = child.g + child.h
 
