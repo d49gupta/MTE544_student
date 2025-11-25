@@ -46,9 +46,12 @@ def return_path(current_node, maze):
 
     return path
 
-def man_heuristic(a, b):
-    # Manhattan distance
+def manhattan_heuristic(a, b):
     return abs(a[0] - b[0]) + abs(a[1] - b[1])
+
+def euclidean_heuristic(a, b):
+    return ((a[0] - b[0])**2 + (a[1] - b[1])**2) ** 0.5
+
 
 
 def search(maze, start, end):
