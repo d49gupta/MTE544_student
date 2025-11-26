@@ -51,7 +51,7 @@ class planner:
         # convert to tuple
         startPose = (startPose[0], startPose[1])
         endPose = (endPose[0], endPose[1])
-        path = search(self.costMap, startPose, endPose, heuristic="euclidian")
+        path = search(self.costMap, startPose, endPose, heuristic="manhattan")
         if path is None:
             print("NOOOOO PATH")
             return None

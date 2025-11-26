@@ -27,7 +27,7 @@ odom_qos=QoSProfile(reliability=2, durability=2, history=1, depth=10)
 
 class localization(Node):
     
-    def __init__(self, type_, loggerName="robotPose.csv", loggerHeaders=["odom_x", "odom_y", "odom_th", "odom_vx", "odom_yawrate","pf_x","pf_y","pf_th","stamp"]):
+    def __init__(self, type_, loggerName="robotPose_manhattan.csv", loggerHeaders=["odom_x", "odom_y", "odom_th", "odom_vx", "odom_yawrate","pf_x","pf_y","pf_th","stamp"]):
 
         super().__init__("localizer")
         
