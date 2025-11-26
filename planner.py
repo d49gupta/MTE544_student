@@ -51,8 +51,9 @@ class planner:
         # convert to tuple
         startPose = (startPose[0], startPose[1])
         endPose = (endPose[0], endPose[1])
-        path = search(self.costMap, startPose, endPose)
+        path = search(self.costMap, startPose, endPose, heuristic="euclidian")
         if path is None:
+            print("NOOOOO PATH")
             return None
         
         pathCart = self.m_utilites.cell_2_position(path)

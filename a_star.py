@@ -2,7 +2,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 from math import sqrt
 
-
 class Node:
     """
         A node class for A* Pathfinding
@@ -28,6 +27,7 @@ class Node:
 
 
 def return_path(current_node, maze):
+    print("RETURN PATH FUNCTION CALLED")
     path = []
     no_rows, no_columns = np.shape(maze)
     print(no_rows, no_columns)
@@ -48,7 +48,8 @@ def return_path(current_node, maze):
     return path
 
 
-def search(maze, start, end):
+def search(maze, start, end, heuristic="euclidian"):
+    print("ENTERING TEHE SEARCH")
     maze = maze.copy().T
 
     """
@@ -75,10 +76,12 @@ def search(maze, start, end):
         return None
     
     # TODO PART 4 Create start and end node with initized values for g, h and f
-    # Use None as parent if not defined
     start_node = Node(parent=None, position=start)
-    start_node.g = 0     # cost from start Node
-    start_node.h = sqrt((start[0] - end[0])**2 + (start[1] - end[1])**2)     # heuristic estimated cost to end Node
+    start_node.g = 0
+    if heuristic == 'manhattan':
+        start_node.h = abs(start[0] - end[0]) + abs(start[1] - end[1])
+    else:
+        start_node.h = sqrt((start[0] - end[0])**2 + (start[1] - end[1])**2)    
     start_node.f = start_node.g + start_node.h
 
     end_node = Node(parent=None, position=end)
@@ -140,8 +143,8 @@ def search(maze, start, end):
         outer_iterations += 1
 
         # TODO: Get the current node with the lowest f value
-        current_node = start_node
-        current_fscore = current_node.f
+        current_node = None
+        current_fscore = None
         for position, node in yet_to_visit_dict.items():
             if current_fscore is None or node.f < current_fscore:
                 current_fscore = node.f
@@ -159,7 +162,7 @@ def search(maze, start, end):
 
         # test if goal is reached or not, if yes then return the path
         if current_node == end_node:
-
+            print("Did I get here?????????????????????")
             return return_path(current_node, maze)
 
         # Generate children from all adjacent squares
@@ -171,7 +174,7 @@ def search(maze, start, end):
             node_position = (current_node.position[0] + new_position[0], current_node.position[1] + new_position[1])
 
             # TODO PART 4 Make sure within range (check if within maze boundary)
-            if (new_position[0] < 0) or (new_position[0] >= no_rows) or (new_position[1] < 0) or (new_position[1] >= no_columns):
+            if (node_position[0] < 0) or (node_position[0] >= no_rows) or (node_position[1] < 0) or (node_position[1] >= no_columns):
                 continue
 
             # Make sure walkable terrain
@@ -187,15 +190,21 @@ def search(maze, start, end):
         # Loop through children
 
         for child in children:
-
             # TODO PART 4 Child is on the visited dict (use get method to check if child is in visited dict, if not found then default value is False)
-            if (yet_to_visit_dict.get(child.position)):
+            if visited_dict.get(child.position, False):
                 continue
 
             # TODO PART 4 Create the f, g, and h values
-            child.g = sqrt((child.position[0] - current_node.position[0])**2 + (child.position[1] - current_node.position[1])**2)
-            # Heuristic costs calculated here, this is using eucledian distance
-            child.h = sqrt((child.position[0] - end_node.position[0])**2 + (child.position[1] - end_node.position[1])**2)
+            if abs(new_position[0]) == 1 and abs(new_position[1]) == 1:
+                child.g = current_node.g + sqrt(2)
+            else:
+                child.g = current_node.g + 1
+            
+            # Calculate heuristic based on the selected method
+            if heuristic == 'manhattan':
+                child.h = abs(child.position[0] - end_node.position[0]) + abs(child.position[1] - end_node.position[1])
+            else:
+                child.h = sqrt((child.position[0] - end_node.position[0])**2 + (child.position[1] - end_node.position[1])**2)
 
             child.f = child.g + child.h
 
